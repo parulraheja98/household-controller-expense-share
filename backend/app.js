@@ -9,10 +9,9 @@ var credentials = require('./credentials.js');
 var user = require('./models/user');
 var question = require('./models/question.js');
 var Payment = require('./models/payment');
-var Member = require('./models/Member.js');
+var Member = require('./models/member.js');
 var Verification = require('./models/verification.js');
 var VerifyPassword = require('./models/verificationPassword.js');
-var Transaction = require('./models/transaction.js/index.js');
 var Household = require('./models/household.js');
 var cookieSession = require('cookie-session');
 var nodemailer = require('nodemailer');
@@ -90,46 +89,6 @@ var mailOptions = {
 
 
 
-function checkLogin(req, res, uname, password) {
-    console.log('checking login 1');
-    console.log(req.body);
-    console.log('checking login 2');
-
-    Member.findOne({username: uname}, function (err, userdata) {
-
-        if (!userdata) {
-            res.status(404).send({error: " User not found"});
-        }
-
-        else if (userdata.password == md5(password)) {
-            req.session.username = userdata.username;
-            res.status(200).json({authorized:true,
-            username:req.session.username                
-            });
-
-        }
-        else {
-            res.status(401).json({authorized:false});
-
-        }
-
-    })
-
-}
-
-
-
-
-app.get('/createtransaction', function (req, res) {
-    var transaction1 = new transaction({
-        type: 'Deposit',
-        amount: 30,
-        date: Date.now(),
-        memberId: 1,
-        paymentId: 1
-    }).save();
-    res.send('completed ')
-})
 
 
 app.get('/paymentinformation',paymentController.paymentinformation);

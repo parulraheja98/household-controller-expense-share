@@ -1,5 +1,5 @@
 
-var Member = require('../models/Member.js');
+var Member = require('../models/member.js');
 var VerifyPassword = require('../models/verificationPassword.js');
 var Verification = require('../models/verification.js');
 
