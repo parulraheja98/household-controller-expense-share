@@ -68,6 +68,21 @@ class BillPayment extends Component {
             console.log('checking response 1');
             console.log(data);
             console.log('checking response 2');
+            if(data.completed) {
+                this.props.history.push(
+                    '/message', {
+                        message:'Payment Successfully Made '
+                    }
+                )
+            }
+
+            else {
+                this.props.history.push(
+                    '/message', {
+                        message:'Payment Unsucessfull'
+                    }
+                )
+            }
 
         })
  
@@ -97,7 +112,7 @@ class BillPayment extends Component {
                     Enter Payment Type
                 </Form.Label>
                 <Col sm={10}>
-                    <Form.Control type='text' placeholder='Enter Payment Type' onChange={this.handlePaymentType}/>
+                    <Form.Control type='text' placeholder='Enter Payment Type' onChange={this.handlePaymentType} required/>
                 </Col>
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontalEmail">
@@ -105,7 +120,7 @@ class BillPayment extends Component {
                     Enter Amount Due
                 </Form.Label>
                 <Col sm={10}>   
-                    <Form.Control type='text' placeholder='Enter Amount Due' onChange={this.handleAmountDue}/>
+                    <Form.Control type='text' placeholder='Enter Amount Due' onChange={this.handleAmountDue} required/>
                 </Col>
             </Form.Group>
             <Form.Group as={Row} controlId="formHorizontalEmail">
@@ -113,7 +128,7 @@ class BillPayment extends Component {
                    Enter Date Due
                 </Form.Label>
                 <Col sm={10}>
-                    <Form.Control type='date' placeholder='Enter Date Due' onChange={this.handleDateDue} />
+                    <Form.Control type='date' placeholder='Enter Date Due' onChange={this.handleDateDue} required/>
                 </Col>
             </Form.Group>
             

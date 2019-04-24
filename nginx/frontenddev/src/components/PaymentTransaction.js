@@ -13,7 +13,6 @@ class PaymentTransaction extends Component {
     }
 
     handlePaymentType(event) {
-        event.preventDefault();
         console.log(event.target.value);
         this.setState({paymentType:event.target.value});
     }
@@ -86,7 +85,7 @@ class PaymentTransaction extends Component {
                         this.state.paymentItems.map(item => (
                             <ListGroup.Item> 
                                 <Form.Check type='radio' name='paymentType' value={item.paymentType} 
-                                onChange={this.handlePaymentType} label={item.paymentType}
+                                onChange={this.handlePaymentType} label={item.paymentType} required
                                 />
                                
                             </ListGroup.Item>
@@ -100,7 +99,7 @@ class PaymentTransaction extends Component {
                 }
                 <Form.Group>
                     <Form.Label> Amount </Form.Label>
-                    <Form.Control type='number' name='amount' onChange={this.handleAmount}/>
+                    <Form.Control type='number' name='amount' onChange={this.handleAmount} required/>
                 </Form.Group>
 
 

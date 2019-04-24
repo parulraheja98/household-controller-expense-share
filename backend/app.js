@@ -199,129 +199,13 @@ app.get('/householdlist',householdController.householdlist);
 app.post('/makepayment',paymentController.makepayment);
 
 
-
-
-app.post('/makepayment', function (req, res) {
-
-    var amount = req.body.amount;
-    var type = req.body.type;
-    var paymentId = req.body.paymentId;
-    var household = req.body.household;
-    var date = req.body.date;
-    var personList = req.body.person;
-
-    console.log('person check ');
-    console.log(req.body.person);
-    console.log('person check 1');
-    console.log('important test');
-    console.log(date);
-    console.log('important test 1');
-    var personSel = [];
-    personSel.push({username: req.session.username});
-    if (typeof personList === "string") {
-        personSel.push({username: personList});
-
-    }
-    else {
-        personList.forEach(function (d) {
-            var personCreate = {username: d};
-            personSel.push(personCreate);
-        })
-
-    }
-
-    console.log('testing debugger 1');
-    console.log(personSel);
-    console.log('testing debugger 2');
-
-
-    Member.find({$or: personSel}, function (err, mem) {
-        console.log('member test 1')
-        console.log(mem);
-        console.log('member test 2')
-        var getMembersLength = personSel.length
-        console.log('debugger check 1');
-        console.log(mem.length);
-        console.log('debugger check 2');
-        //var getMembersLength = mem.length;
-        var paymentShare = amount / getMembersLength;
-        var updAmount = amount - paymentShare;
-        var payment = new Payment({
-            paymentId: paymentId,
-            paymentType: type,
-            amountDue: updAmount,
-            paymentDate: date,
-            lender: req.session.username,
-            household: household
-        }).save();
-
-        mem.forEach(function (memberLis, i) {
-            console.log('test 1');
-            console.log(paymentShare);
-            console.log('test 2');
-            if (memberLis.amount != undefined)
-                var amountMemUpd = memberLis.amount;
-            else
-                amountMemUpd = 0;
-            if (memberLis.username == req.session.username)
-                Member.update({username: req.session.username}, {$set: {amount: amountMemUpd + updAmount}}, {new: true}, function (err, doc) {
-                    console.log('parul raheja test 1');
-                })
-            else
-                Member.update({username: memberLis.username}, {$set: {amount: amountMemUpd - paymentShare}}, {new: true}, function (err, doc) {
-        
-                    console.log(memberLis.username);
-                })
-
-            if (memberLis.username === req.session.username) {
-                memberLis.payment.push({
-                    paymentId: paymentId,
-                    amountDue: +paymentShare
-                })
-            }
-            else {
-                memberLis.payment.push({
-                    paymentId: paymentId,
-                    amountDue: -paymentShare
-                })
-
-            }
-            memberLis.save();
-            console.log('checking member list 1');
-            console.log(memberLis);
-            console.log('checking member list 2');
-
-            if (i == mem.length - 1)
-                completeCount();
-        })
-
-
-    })
-
-    function completeCount() {
-        res.json({
-            completed:true
-        })
-    }
-
-
-})
-
 app.get('/billitems/:household',paymentController.billitems);
 
 
-app.post('/processLogin1',authenticationController.checkLogin);
+app.post('/processLogin1',authenticationController.processLogin);
 
-app.post('/processLogin1', function (req, res) {
-    checkLogin(req, res, req.body.uname.trim(), req.body.pword.trim())
-
-})
 
 app.post('/processReg1', authenticationController.processReg);
-
-
-
-
 
 
 app.get('/sessioninfo', function (req, res) {

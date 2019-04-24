@@ -228,7 +228,7 @@ var makepayment = (req,res,next) => {
             memberLis.save();
 
             if (i == mem.length - 1)
-                completeCount();
+                completeCount(req,res,next);
         })
 
 

@@ -46,7 +46,7 @@ render() {
         <Form>
         <Form.Group>
             <Form.Label>  Enter Household Name </Form.Label>
-            <Form.Control type='text' placeholder='Enter Household Name' onChange={this.changeHouseholdName} />
+            <Form.Control type='text' placeholder='Enter Household Name' onChange={this.changeHouseholdName} required />
         </Form.Group>
         <Button variant='primary' onClick={this.handleSubmit}>
             Create Household

@@ -50,7 +50,8 @@ componentDidUpdate(prevProps, prevState) {
     console.log('previous state check 1');
     var loginCheck = prevProps.cookies.cookies.loginCredentials;
     if(!prevState.loggedIn && loginCheck) {
-        this.setState({loggedIn:true});
+        this.setState({loggedIn:true,loginInfo:loginCheck});
+
     }
     
   
@@ -101,7 +102,7 @@ render() {
                 
             <Nav.Link href="/listofhouseholds" style={{marginLeft:'auto'}}> List of Households </Nav.Link>
             <Nav.Link href='/createhousehold'> Create Household </Nav.Link>
-            <Nav.Link href="/billpayments"> Bill Payments </Nav.Link>
+            <Nav.Link href="/paymentinfo"> Bill Payments </Nav.Link>
             <Nav.Link href="/individualpayment"> Individual Payments </Nav.Link>
             <Nav.Link onClick={this.logout} className='testing'> Logout </Nav.Link>
             </Nav>

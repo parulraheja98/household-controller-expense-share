@@ -1,5 +1,10 @@
 var Payment = require('../models/payment');
 var Member = require('../models/member');
+var uuidV4 = require('uuid/v4');
+var nodemailer = require('nodemailer');
+var Household = require('../models/household.js');
+
+
 
 var householdlist = (req,res,next) => {
 
@@ -80,8 +85,52 @@ var householdlist = (req,res,next) => {
 
 }
 
+var addmember = (req,res,next) => {
+    var tokenGenerator = uuidV4();
+    console.log('first stage test');
+    console.log(process.ENV);
+    console.log(req.body);
+    var emailAddress = req.body.email;
+    var household = req.body.household;
+    var verificationLink = 'localhost:85/verificationtoken/' + tokenGenerator + '/' + household;
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'parultestcheck1@gmail.com',
+            pass: 'boldtest12345'
+        }
+    });
+
+    var mailOptions = {
+        from: 'parultestcheck1@gmail.com',
+        to: emailAddress,
+        subject: 'Sending Email using Node.js',
+        text: verificationLink
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            res.status(500).json({
+                error:error
+            })
+            
+        } else {
+
+            console.log('Email sent: ' + info.response);
+            var testVerification = new Verification({
+                token: tokenGenerator
+            }).save();
+        
+           res.status(200).json({completed:true});
+        }
+    });
+
+}
+
+
 module.exports = {
     householdlist,
+    addmember,
     addhousehold,
     paymentbyhousehold,
     householdlist

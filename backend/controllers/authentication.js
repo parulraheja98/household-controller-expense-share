@@ -2,6 +2,10 @@
 var Member = require('../models/member.js');
 var VerifyPassword = require('../models/verificationPassword.js');
 var Verification = require('../models/verification.js');
+var md5 = require('md5');
+var uuidV4 = require('uuid/v4');
+var nodemailer = require('nodemailer');
+
 
 var generatepassword = (req,res,next) => {
     var tokenGenerator = uuidV4();
@@ -197,7 +201,7 @@ var processReg = (req,res,next) => {
 
 }
 
-var processReg = (req,res,next) => {
+var processLogin = (req,res,next) => {
 
     checkLogin(req, res, req.body.uname.trim(), req.body.pword.trim())
 
@@ -229,6 +233,7 @@ var checkLogin = (req,res,uname,password,next) => {
 
 module.exports = {
     checkLogin,
+    processLogin,
     processReg,
     validatetoken,
     resetpass,

@@ -67,7 +67,7 @@ return (
        {
    this.state.listHousehold.map(data => (
     <ListGroup.Item key={data._id}> 
-    <Form.Check type='radio' label={data.name} onChange={this.selHousehold}  name='household' value={data.name}/>
+    <Form.Check type='radio' label={data.name} onChange={this.selHousehold}  name='household' value={data.name} required/>
     <a href={'/billpayment/'+data.name}> Bill Payment </a>
    </ListGroup.Item>
    )

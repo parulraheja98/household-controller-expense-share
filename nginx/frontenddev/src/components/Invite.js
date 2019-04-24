@@ -63,7 +63,7 @@ return (
     <Form onSubmit={this.handleSubmit}>
     <Form.Group>
     <Form.Label> Enter Email Address</Form.Label>
-    <Form.Control type='text' placeholder='Email' onChange={this.handleEmail} />
+    <Form.Control type='text' placeholder='Email' onChange={this.handleEmail} required />
     </Form.Group>
     <Button variant='primary' type='submit'> Send Invite </Button>
     </Form>
