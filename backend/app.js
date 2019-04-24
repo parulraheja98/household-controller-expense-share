@@ -86,7 +86,7 @@ var mailOptions = {
 
 
 app.get('/testingraheja', (req,res) => {
-    console.log(process.env.TEST);
+    console.log(process.env.PASSWORD);
 	res.send('completed');
 
 });
