@@ -1,5 +1,7 @@
+
 var express = require('express'),
     handlebars = require('express-handlebars').create({defaultLayout: 'main'});
+    require('dotenv').config();
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://praheja:boldtest12345@ds163764.mlab.com:63764/shoppingcart');
 var app = express();
@@ -20,8 +22,6 @@ var authenticationController = require('./controllers/authentication.js');
 var paymentController = require('./controllers/payment.js');
 var householdController = require('./controllers/household.js');
 var counter = 0;
-
-
 var md5 = require('md5');
 
 var h = 0;
@@ -65,8 +65,7 @@ app.use(require('cookie-parser')(credentials.cookieSecret));
 
 app.use(express.static(__dirname + '/public'));
 
-const dotenv = require('dotenv');
-dotenv.config();
+
 
 
 
@@ -86,9 +85,11 @@ var mailOptions = {
 };
 
 
+app.get('/testingraheja', (req,res) => {
+    console.log(process.env.TEST);
+	res.send('completed');
 
-
-
+});
 
 
 app.get('/paymentinformation',paymentController.paymentinformation);
