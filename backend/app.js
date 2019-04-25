@@ -97,59 +97,6 @@ app.get('/paymentinformation',paymentController.paymentinformation);
 app.get('/memberinformation/:paymentid',paymentController.memberinfo);
 
 
-/*
-
-app.get('/memberinfo/:paymentId', function (req, res) {
-    var paymentId = req.params.paymentId;
-    var paymentInfo = [];
-    var checking = {};
-    var amountDue = {};
-    console.log(paymentId);
-    Member.find({}, function (err, mem) {
-        mem.forEach(function (d) {
-            d.payment.forEach(function (paymentDetails,ind) {
-                if (paymentDetails.paymentId === paymentId) {
-                   
-                    console.log('payment details check 1');
-                    console.log(paymentDetails);
-                    var paymentFinalDetails = {
-                        paymentDetails,
-                        user:d.username
-                    }
-                    
-                    console.log('payment details check 2');
-                    paymentInfo.push(paymentFinalDetails);
-
-                }
-            })
-
-
-        })
-
-    }).then(function(r) {
-        Payment.find({paymentId: paymentId}, function (err, paymentDetails) {
-            amountDue['amount'] = paymentDetails[0].amountDue;
-            console.log('before test');
-            console.log(paymentDetails);
-            console.log('after test');
-            console.log('debuggger test 1');
-        }).then(function (r) {
-            console.log('test debugger payment');
-            console.log(r);
-            console.log('test debugger payment 2');
-           
-          res.json({
-                paymentInfo: paymentInfo,
-                amountDue: amountDue
-            })
-
-
-
-        })
-    })
-})
-
-*/
 
 app.post('/generatepassword',authenticationController.generatepassword);
 
@@ -228,3 +175,5 @@ app.use(function (err, req, res, next) {
 app.listen(app.get('port'), function () {
     console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate');
 });
+
+module.exports = app;

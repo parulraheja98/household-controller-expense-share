@@ -61,16 +61,39 @@ var paymentbyhousehold = (req,res,next) => {
 }
 
 var addhousehold = (req,res,next) => {
+    console.log('checking household body 1');
+    console.log(req.body);
+    console.log('checking household body 2');
+    console.log('checking session 1');
+    if(req.session.username === undefined)
+    console.log('checking session 2');
 
-    householdCreate = new Household({
-        name: req.body.household
-    }).save();
-
+    if(req.session && req.session.username !== undefined && req.body.household) {
+        householdCreate = new Household({
+            name: req.body.household
+        }).save();
     Member.update({username: req.session.username}, {$push: {household: {name: req.body.household}}}, {new: true}, function (err, doc) {
         res.json({
             householdCreated:true
         })
     });
+}
+
+else if(!req.session.username) {
+    res.status(500).json({
+        message:'User not logged in'
+    })
+}
+
+else {
+    console.log('debugger 3');
+    res.status(500).json({
+        message:'Household Not Entered as Input'
+    })
+}
+
+
+
 }
 
 var householdlist = (req,res,next) => {

@@ -154,11 +154,18 @@ var validatetoken = (req,res,next) => {
 
 var processReg = (req,res,next) => {
 
-    console.log('checking body');
-    console.log(req.body);
-    console.log('checking body 1');
-
-    if (req.body.pword.trim() == req.body.pword2.trim()) {
+    Member.find({username:req.body.uname})
+    .then((mem) => {
+        console.log('testing member here first');
+        console.log(mem);
+        console.log('testing member here second');
+        if(mem.length) {
+            res.status(401).send({
+            authorized:false,
+            message:'User Already Exists '
+            });
+        }
+        else if(req.body.pword.trim() == req.body.pword2.trim()) {
 
         if (req.body.household) {
 
@@ -167,7 +174,7 @@ var processReg = (req,res,next) => {
                 username: req.body.uname,
                 password: md5(req.body.pword),
                 email: req.body.email,
-                type: "guest",
+                type: "household",
                 amount: 0,
                 household: {name: req.body.household}
 
@@ -175,7 +182,6 @@ var processReg = (req,res,next) => {
 
 
         }
-
         else {
 
             var newUser = Member({
@@ -191,12 +197,17 @@ var processReg = (req,res,next) => {
 
         newUser.save();
         res.status(200).send({authorized:true})
+        }
 
-    }
+        else {
+            res.status(401).send({
+                message:'Incorrect Password Entered',
+                authorized:false
+            });
 
-    else {
-        res.status(401).send({authorized:false});
-    }
+        }
+
+    })
 
 
 }
@@ -212,10 +223,12 @@ var checkLogin = (req,res,uname,password,next) => {
     Member.findOne({username: uname}, function (err, userdata) {
 
         if (!userdata) {
+            console.log('debugger 1');
             res.status(404).send({error: " User not found"});
         }
 
         else if (userdata.password == md5(password)) {
+            console.log('debugger 2');
             req.session.username = userdata.username;
             res.status(200).json({authorized:true,
             username:req.session.username                
@@ -223,6 +236,7 @@ var checkLogin = (req,res,uname,password,next) => {
 
         }
         else {
+            console.log('debugger 3');
             res.status(401).json({authorized:false});
 
         }
