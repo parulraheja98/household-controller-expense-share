@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import {Nav,Navbar} from 'react-bootstrap';
 import '../App.css';
 import {withCookies,Cookies} from 'react-cookie';
+import {withRouter,Redirect} from 'react-router-dom';
 
 class NavigationBar extends Component {
 
@@ -69,10 +70,14 @@ testchanges() {
 
 
 logout(event) {
+
     const {cookies} = this.props;
-    cookies.remove('loginCredentials');
+    cookies.remove('loginCredentials',{path:'/'});
     console.log('testing 231');
-    window.location.href='/';
+    console.log("testing debugger 1");
+    console.log(cookies.get('loginCredentials'));
+    console.log('testing debuggerr 2');
+    this.props.history.push('/');
 }
 
 getHour() {
@@ -115,5 +120,5 @@ render() {
 }
 
 }
-
-export default withCookies(NavigationBar);
+const Testing = withCookies(NavigationBar);
+export default withRouter(Testing);

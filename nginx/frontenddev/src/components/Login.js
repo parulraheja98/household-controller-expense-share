@@ -3,6 +3,7 @@ import {Form,Button,Alert} from 'react-bootstrap';
 import '../App.css';
 import { withCookies, Cookies } from 'react-cookie';
 
+
 class Login extends Component {
 
 constructor(props) {
@@ -12,7 +13,9 @@ constructor(props) {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+
 }
+
 
 handleSubmit(event) {
 
@@ -36,7 +39,7 @@ console.log(data);
 console.log('test completed 1');
 if(data.authorized) {
     this.setState({invalidLogin:false});
-    cookies.set('loginCredentials',data.username);
+    cookies.set('loginCredentials',data.username,{path:'/'});
     this.setState({loggedIn:true});
     this.props.history.push('/');
 }
@@ -61,14 +64,25 @@ handlePasswordChange(event) {
 
 componentDidMount() {
     const {cookies} = this.props;
-    console.log('cookie info');
-    console.log(cookies.get('loginCredentials'))
     if(cookies.get('loginCredentials')) {
         this.setState({loggedIn:true});
     }
-    console.log('cookie info 1');
-    console.log(cookies.get('loginCredentials'));
 }
+
+
+
+
+componentDidUpdate(prevProps, prevState) {
+    const {cookies} = this.props;
+    var loginCheck = prevProps.cookies.cookies.loginCredentials;
+    if(prevState.loggedIn && cookies.get('loginCredentials') == undefined) {
+        this.setState({loggedIn:false});   
+    }
+
+}
+
+
+
 
 render() {
 
@@ -92,10 +106,11 @@ render() {
                 <Alert variant='danger'> Invalid Login Credentials </Alert>
                 :null
             }
+
         </Form>
 
         }
-
+        
         </div>
 
     )

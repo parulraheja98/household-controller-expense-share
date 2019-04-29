@@ -4,8 +4,8 @@ import './App.css';
 import Register from './components/Register.js';
 import Login from './components/Login.js';
 import BillPayment from './components/BillPayment';
-import {Switch , Route} from 'react-router';
-import {BrowserRouter} from 'react-router-dom';
+import {Switch } from 'react-router';
+import {BrowserRouter,Route} from 'react-router-dom';
 import CreateHousehold from './components/CreateHousehold';
 import ListHousehold from './components/ListHousehold';
 import Check from './components/Check.js';
@@ -22,13 +22,14 @@ import ResetPassword from './components/ResetPassword';
 import ResetLink from './components/ResetLink';
 import PaymentTransaction from './components/PaymentTransaction';
 import PaymentDetails from './components/PaymentDetails';
+import {withRouter} from 'react-router-dom';
 
 class App extends Component {
   render() {
     return (
       <BrowserRouter>
       <div>
-        <NavigationBar checking={this.logout} />
+        <NavigationBar checking={this.logout}/>
         <Switch>
           <Route exact path='/' component={Login} />
           <Route exact path='/register' component={Register} />

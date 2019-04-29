@@ -2,14 +2,17 @@
 
 import React,{Component} from 'react';
 import {ListGroup} from 'react-bootstrap';
+import {withCookies,Cookies} from 'react-cookie';
 class PaymentDetails extends Component {
 
 constructor(props) {
     super(props);
+    const {cookies} = props;
     this.state = {paymentInfo:[],amountDue:''};
 }
 
 componentDidMount() {
+    const {cookies} = this.props;
     var paymentId = this.props.match.params.paymentId;
     var url = 'http://localhost:3017/memberinformation/'+paymentId;
     fetch(url,{
@@ -68,4 +71,4 @@ render() {
 }
 }
 
-export default PaymentDetails;
+export default withCookies(PaymentDetails);
