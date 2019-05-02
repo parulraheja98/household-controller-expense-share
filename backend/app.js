@@ -3,7 +3,7 @@ var express = require('express'),
     handlebars = require('express-handlebars').create({defaultLayout: 'main'});
     require('dotenv').config();
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://praheja:boldtest12345@ds163764.mlab.com:63764/shoppingcart');
+mongoose.connect('mongodb://praheja:boldtest12345@ds145926.mlab.com:45926/household-project');
 var app = express();
 var cors = require('cors');
 var moment = require('moment');
@@ -160,6 +160,16 @@ app.get('/sessioninfo', function (req, res) {
     res.send(req.session);
 })
 
+
+
+app.get('/testcurrent' , paymentController.testcurrent);
+app.get('/checkhere',paymentController.checkhere);
+
+
+
+app.get('/testinghere', (req,res) => {
+    res.send('completed');
+})
 
 app.use(function (req, res) {
     res.status(404);

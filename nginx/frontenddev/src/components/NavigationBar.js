@@ -54,6 +54,10 @@ componentDidUpdate(prevProps, prevState) {
         this.setState({loggedIn:true,loginInfo:loginCheck});
 
     }
+
+    if(prevState.loggedIn && loginCheck == undefined) {
+        this.setState({loggedIn:false});
+    }
     
   
 }

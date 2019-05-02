@@ -20,7 +20,8 @@ handleSubmit(event) {
             email:this.state.email,
             household:this.state.household
         })
-    }).then(response => response.json())
+    })
+    .then(response => response.json())
     .then(data => {
         console.log('testing 1');
         console.log(data);
