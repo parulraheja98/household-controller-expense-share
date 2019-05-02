@@ -162,11 +162,6 @@ app.get('/sessioninfo', function (req, res) {
 
 
 
-app.get('/testcurrent' , paymentController.testcurrent);
-app.get('/checkhere',paymentController.checkhere);
-
-
-
 app.get('/testinghere', (req,res) => {
     res.send('completed');
 })
