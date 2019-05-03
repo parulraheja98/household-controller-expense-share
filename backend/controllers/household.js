@@ -6,7 +6,7 @@ var Household = require('../models/household.js');
 
 
 
-var householdlist = (req,res,next) => {
+var householdlist = (req, res, next) => {
 
     var tokenGenerator = uuidV4();
     console.log('first stage test');
@@ -30,74 +30,86 @@ var householdlist = (req,res,next) => {
         text: verificationLink
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
             res.status(500).json({
-                error:error
+                error: error
             })
-            
+
         } else {
 
             console.log('Email sent: ' + info.response);
             var testVerification = new Verification({
                 token: tokenGenerator
             }).save();
-        
-           res.status(200).json({completed:true});
+
+            res.status(200).json({
+                completed: true
+            });
         }
     });
 }
 
-var paymentbyhousehold = (req,res,next) => {
+var paymentbyhousehold = (req, res, next) => {
     var householdName = req.params.name;
-    Payment.find({household: householdName}, function (err, paymentInfo) {
+    Payment.find({
+        household: householdName
+    }, function(err, paymentInfo) {
         //res.render('paymenthousehold', {payment: paymentInfo, household: householdName});
         res.json({
-            payment:paymentInfo,
-            household:householdName
+            payment: paymentInfo,
+            household: householdName
         })
 
     })
 }
 
-var addhousehold = (req,res,next) => {
+var addhousehold = (req, res, next) => {
     console.log('checking household body 1');
     console.log(req.body);
     console.log('checking household body 2');
     console.log('checking session 1');
-    if(req.session.username === undefined)
-    console.log('checking session 2');
+    if (req.session.username === undefined)
+        console.log('checking session 2');
 
-    if(req.session && req.session.username !== undefined && req.body.household) {
+    if (req.session && req.session.username !== undefined && req.body.household) {
         householdCreate = new Household({
             name: req.body.household
         }).save();
-    Member.update({username: req.session.username}, {$push: {household: {name: req.body.household}}}, {new: true}, function (err, doc) {
-        res.json({
-            householdCreated:true
+        Member.update({
+            username: req.session.username
+        }, {
+            $push: {
+                household: {
+                    name: req.body.household
+                }
+            }
+        }, {
+            new: true
+        }, function(err, doc) {
+            res.json({
+                householdCreated: true
+            })
+        });
+    } else if (!req.session.username) {
+        res.status(500).json({
+            message: 'User not logged in'
         })
-    });
-}
-
-else if(!req.session.username) {
-    res.status(500).json({
-        message:'User not logged in'
-    })
-}
-
-else {
-    console.log('debugger 3');
-    res.status(500).json({
-        message:'Household Not Entered as Input'
-    })
-}
+    } else {
+        console.log('debugger 3');
+        res.status(500).json({
+            message: 'Household Not Entered as Input'
+        })
+    }
 
 
 
 }
 
-var householdlist = (req,res,next) => {
-    Member.find({username: req.session.username}, function (err, mem) {
+var householdlist = (req, res, next) => {
+    Member.find({
+        username: req.session.username
+    }, function(err, mem) {
         var listMember = mem[0];
         //res.render('listhousehold', {household: listMember.household});
         res.json({
@@ -108,7 +120,7 @@ var householdlist = (req,res,next) => {
 
 }
 
-var addmember = (req,res,next) => {
+var addmember = (req, res, next) => {
     var tokenGenerator = uuidV4();
     console.log('first stage test');
     console.log(process.ENV);
@@ -131,20 +143,22 @@ var addmember = (req,res,next) => {
         text: verificationLink
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
             res.status(500).json({
-                error:error
+                error: error
             })
-            
+
         } else {
 
             console.log('Email sent: ' + info.response);
             var testVerification = new Verification({
                 token: tokenGenerator
             }).save();
-        
-           res.status(200).json({completed:true});
+
+            res.status(200).json({
+                completed: true
+            });
         }
     });
 
