@@ -48,23 +48,7 @@ var memberinfo = (req,res,next) => {
     
 }
 
-var testcurrent = (req,res,next) => {
-    var firstPromise = Payment.find({});
-    var secondPromise = Member.find({});
-    Promise.all([firstPromise,secondPromise])
-    .then((r) => {
-      res.json({
-          r
-      })
-    })
-}
 
-var checkhere = (req,res,next) => {
-   var check =  testcurrent(req,res,next);
-   res.json({
-       check
-   })
-}
 
 var paymentpage = (req,res,next) => {
 
@@ -340,8 +324,6 @@ module.exports = {
     paymentpage,
     memberinfo,
     paymentinformation,
-    testcurrent,
-    checkhere,
     personAmountCheck
 
 
