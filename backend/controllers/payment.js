@@ -10,15 +10,34 @@ var paymentinformation = (req, res, next) => {
 
 }
 
-var memberinfo = (req, res, next) => {
-    var paymentInfo = [];
-    var check = 'testing';
-    var checking = {};
-    var amountDue = {};
-    var paymentInfo = [];
-    var paymentId = req.params.paymentid;
+var amountDueMember = async (paymentId) => {
 
-    Member.find({}, function(err, mem) {
+    return new Promise((resolve,reject) => {
+
+        Payment.find({paymentId},(err,paymentInfo) => {
+            if(err) {
+                reject(err);
+            }
+            else {
+                resolve(paymentInfo[0].amountDue)
+            }
+        })
+
+    })
+
+}
+
+
+var paymentInfoMember = async (paymentId) => {
+    var paymentInfo = [];
+
+    return new Promise((resolve,reject) => {
+        Member.find({}, function(err, mem) {
+            if(err) {
+                console.log('checking error 1');
+                reject(err);
+            }
+            else {
             mem.forEach(function(d) {
                 d.payment.forEach(function(paymentDetails, ind) {
                     if (paymentDetails.paymentId === paymentId) {
@@ -32,26 +51,30 @@ var memberinfo = (req, res, next) => {
                 })
 
             })
+            resolve(paymentInfo);
+        }
+            
+    })
 
-
-        }).then(function(r) {
-
-            var paymentId = req.params.paymentid;
-            return Payment.find({
-                paymentId: paymentId
-            });
-
-        })
-        .then(function(r) {
-            res.json({
-                paymentInfo,
-                amountDue: r[0].amountDue
-            })
-
-        })
-
+    })
 }
 
+var memberinfo = async (req, res, next) => {
+    var paymentInfo = [];
+    var check = 'testing';
+    var checking = {};
+    var amountDue = {};
+    var paymentInfo = [];
+    var paymentId = req.params.paymentid;
+    var paymentDetailsOfMember = await paymentInfoMember(paymentId);
+    var amountOfMember = await amountDueMember(paymentId);
+            res.json({
+                paymentInfo:paymentDetailsOfMember,
+                amountDue:amountOfMember
+            })
+
+
+}
 
 
 var paymentpage = (req, res, next) => {
@@ -95,7 +118,7 @@ var personAmountCheck = (mem, paymentId) => {
     console.log('rus check 2');
     var personAmountDue = 0;
 
-    for (let el of mem[0].payment) {
+    for (let el of mem.payment) {
         if (el.paymentId == paymentId) {
             personAmountDue = el.amountDue;
         }
@@ -112,7 +135,49 @@ var payId = (id) => {
     return 2;
 }
 
-var transactionpayment = (req, res, next) => {
+async function memberDetails(username) {
+    return new Promise((resolve,reject) => {
+
+        Member.find({username},(err,mem) => {
+            if(err) {
+                reject(err);
+            }
+            else {
+                resolve(mem);
+            }
+        })
+
+
+
+    })
+
+
+
+}
+async function paymentOfHousehold(household,paymentType) {
+
+    return new Promise((resolve,reject) => {
+     Payment.find({
+            $and: [{
+                paymentType
+            }, {
+                household
+            }]
+        } , (err,paymentInfo) => {
+            if(err) {
+                reject(err);
+            }
+            else {
+                resolve(paymentInfo)
+            }
+        })
+    
+    })
+
+}
+
+
+var transactionpayment = async (req, res, next) => {
 
     /*
     Payment.findOneAndUpdate({paymentType:req.body.paymentType},{$set:{amountDue:req.body.amount}},{new:true},function(err,doc) {
@@ -133,28 +198,17 @@ var transactionpayment = (req, res, next) => {
     var paymentItem = '';
     var amountMember = 0;
 
-    var firstQuer = Payment.find({
-        $and: [{
-            paymentType: paymentType
-        }, {
-            household: req.body.household
-        }]
-    })
-    var secondQuer = Member.find({
-        username: payeeId
-    });
+    var memDetails = await memberDetails(payeeId);
+    var paymentHousehold = await paymentOfHousehold(req.body.household,paymentType);
 
-    Promise.all([firstQuer, secondQuer])
-        .then((re) => {
-
-            var paymentItem = re[0];
-            paymentId = paymentItem[0].paymentId;
+            paymentItem = paymentHousehold[0];
+            paymentId = paymentHousehold[0].paymentId;
             console.log('check payment id 1');
             console.log(paymentId);
             console.log('check payment id 2');
 
-            var member = re[1];
-            amountMember = member[0].amount;
+            var member = memDetails[0];
+            amountMember = member.amount;
             personAmountDue = personAmountCheck(member, paymentId);
             personNetAmount = personAmountDue + paymentAmount;
 
@@ -201,87 +255,99 @@ var transactionpayment = (req, res, next) => {
                     paymentId: paymentId
                 });
 
-                Promise.all([firstQuery, secondQuery, thirdQuery]).then((reso) => {
+                Promise.all([firstQuery, secondQuery, thirdQuery]).then(async (reso) => {
 
                     var lender = '';
                     var paymentLender = 0;
                     var mem = reso[2];
+                    var paymentLender = await lenderMember(mem[0].lender);
                     //}).then((r) => {
-                    Member.find({
-                            username: mem[0].lender
-                        }, function(err, memLender) {
-                            lender = mem[0].lender;
-                            console.log('member lender check 1');
-                            console.log(memLender);
-                            console.log('member lender check 2');
-                            paymentLender = memLender[0].amount;
-
-                        })
-
-
-                        .then((r) => {
-                            console.log('crucial check 1');
-                            console.log(paymentLender);
-                            console.log(paymentAmount);
-                            console.log(lender);
-                            console.log('crucial check 2');
-                            return Member.update({
-                                username: lender
-                            }, {
-                                $set: {
-                                    amount: paymentLender - paymentAmount
-                                }
-                            }, {
-                                new: true
-                            }, function(err, doc) {
-                                console.log(doc);
-                            })
-                        }).then(function(r) {
-
-                            updAmountDue = paymentItem[0].amountDue - paymentAmount;
-                            console.log('some checks here 1');
-                            console.log(updAmountDue);
-                            console.log('some check here 2');
-                            Payment.update({
-                                $and: [{
-                                    paymentType: paymentType
-                                }, {
-                                    household: req.body.household
-                                }]
-                            }, {
-                                $set: {
-                                    amountDue: updAmountDue
-                                }
-                            }, {
-                                new: true
-                            }, function(err, updPayment) {
-                                if (err) {
-                                    res.status(500).json({
-                                        message: 'Payment Was unsuccessfull'
-                                    })
-                                } else {
-                                    console.log(updPayment);
-                                    res.status(200).json({
-                                        message: 'Payment successfully made '
-                                    })
-
-
-                                }
-                            })
-
-
-                        }).catch(function(e) {
-                            res.json({
-                                error: 'You cannot pay more than amount that is due '
-                            })
-                        })
+                    console.log('checking lender payment 1');
+                    console.log(paymentLender);
+                    console.log('checking payment lender 2');   
+                    var updAmountForMember = await updMemAmount(mem[0].lender,paymentAmount,paymentLender);
+                    var  updAmountDue = paymentItem.amountDue - paymentAmount;
+                    console.log('some checks here 1');
+                    console.log(updAmountDue);
+                    console.log('some check here 2');
+                    var updPaymentOfHousehold = await updPaymentAndHousehold(paymentType,req.body.household,updAmountDue);
+                    console.log(updPaymentOfHousehold);
+                     res.json(updPaymentOfHousehold);
+                            
                 })
 
             }
 
+        
+
+
+}
+
+
+
+async function lenderMember(lender) {
+
+    return new Promise((resolve,reject) => {
+        Member.find({username:lender},(err,mem) => {
+            if(err) {
+                reject(mem);
+            }
+            else {
+                resolve(mem[0].amount);
+
+            }
+
         })
+    })
 
+}
 
+async function updMemAmount(lender,paymentAmount,paymentLender) {
+    return new Promise((resolve,reject) => {
+        Member.update({
+                    username: lender
+                      }, {
+                    $set: {
+                        amount: paymentLender - paymentAmount
+                    }}, 
+                    {
+                    new: true
+                    }, (err,doc) => {
+                    if(err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(doc);
+                    }
+                })
+                
+
+    })
+
+}
+
+async function updPaymentAndHousehold(paymentType,household,updAmountDue) {
+    return new Promise((resolve,reject) => {
+        Payment.update({
+                        $and: [{paymentType: paymentType}, {household}]}, {
+                        $set: {
+                                amountDue: updAmountDue
+                            }
+                        }, 
+                        {
+                            new: true
+                        }, (err, updPayment) => {
+                            if (err) {
+                                reject({
+                                    message: 'Payment Was unsuccessfull'
+                                })
+                            } else {
+                                console.log(updPayment);
+                                resolve({message: 'Payment Was successfull'});
+                            }
+
+    })
+    })
 }
 
 
