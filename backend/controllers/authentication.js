@@ -9,11 +9,7 @@ var nodemailer = require('nodemailer');
 var generatepassword = (req, res, next) => {
     var tokenGenerator = uuidV4();
     var email = req.body.email;
-    console.log('email check 1');
-    console.log(email);
-    console.log('email check 2');
     var verificationLink = 'localhost:3000/verifylink/' + tokenGenerator;
-    console.log('reaching this stage 1');
 
     Member.find({
         email: email
@@ -28,8 +24,8 @@ var generatepassword = (req, res, next) => {
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'parultestcheck1@gmail.com',
-                    pass: 'boldtest12345'
+                    user: '',
+                    pass: ''
                 }
             });
 
@@ -42,19 +38,16 @@ var generatepassword = (req, res, next) => {
 
             transporter.sendMail(mailOptions, function(error, info) {
                 if (error) {
-                    console.log('debugging test 1');
                     res.status(500).json({
                         error: 'Email Not Sent'
                     })
                 } else {
-                    console.log('Email sent: ' + info.response);
                     res.status(200).json({
                         message: 'Email Successfully sent '
                     })
                 }
             });
         } else {
-            console.log('debugging test 3');
             res.status(500).json({
                 error: 'Email Address doesnot exist '
             })
@@ -98,7 +91,6 @@ var resetpass = (req, res, next) => {
     VerifyPassword.find({
         token
     }, function(err, verified) {
-        console.log(verified[0]);
         if (req.body.pword === req.body.pword2 && verified[0].counter == 1) {
 
             VerifyPassword.update({
@@ -110,7 +102,6 @@ var resetpass = (req, res, next) => {
             }, {
                 new: true
             }, function(err, doc) {
-                console.log('completed');
             })
             Member.update({
                 username: username
@@ -121,7 +112,6 @@ var resetpass = (req, res, next) => {
             }, {
                 new: true
             }, function(err, upd) {
-                console.log('completed 2');
             })
 
             res.status(200).json({
@@ -172,9 +162,7 @@ var processReg = (req, res, next) => {
             username: req.body.uname
         })
         .then((mem) => {
-            console.log('testing member here first');
-            console.log(mem);
-            console.log('testing member here second');
+
             if (mem.length) {
                 res.status(401).send({
                     authorized: false,
@@ -241,12 +229,10 @@ var checkLogin = (req, res, uname, password, next) => {
     }, function(err, userdata) {
 
         if (!userdata) {
-            console.log('debugger 1');
             res.status(404).send({
                 error: " User not found"
             });
         } else if (userdata.password == md5(password)) {
-            console.log('debugger 2');
             req.session.username = userdata.username;
             res.status(200).json({
                 authorized: true,
@@ -254,7 +240,6 @@ var checkLogin = (req, res, uname, password, next) => {
             });
 
         } else {
-            console.log('debugger 3');
             res.status(401).json({
                 authorized: false
             });

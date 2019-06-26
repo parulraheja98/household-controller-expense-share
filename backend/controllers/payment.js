@@ -34,7 +34,6 @@ var paymentInfoMember = async (paymentId) => {
     return new Promise((resolve,reject) => {
         Member.find({}, function(err, mem) {
             if(err) {
-                console.log('checking error 1');
                 reject(err);
             }
             else {
@@ -112,10 +111,6 @@ var transactioninfo = (req, res, next) => {
 }
 
 var personAmountCheck = (mem, paymentId) => {
-    console.log('rus check 1');
-    console.log(mem);
-    console.log(paymentId);
-    console.log('rus check 2');
     var personAmountDue = 0;
 
     for (let el of mem.payment) {
@@ -128,12 +123,6 @@ var personAmountCheck = (mem, paymentId) => {
 
 }
 
-var payId = (id) => {
-    console.log('checking id 1');
-    console.log(id);
-    console.log('checking id 2');
-    return 2;
-}
 
 async function memberDetails(username) {
     return new Promise((resolve,reject) => {
@@ -185,11 +174,6 @@ var transactionpayment = async (req, res, next) => {
     })
     */
     var paymentAmount = parseInt(req.body.amount);
-    console.log('praheja-test');
-    console.log(typeof(paymentAmount));
-    console.log('payment amount check 1');
-    console.log(paymentAmount);
-    console.log('payment amount check 2');
     var payeeId = req.body.username;
     var paymentType = req.body.paymentType;
     var paymentId = '';
@@ -203,28 +187,15 @@ var transactionpayment = async (req, res, next) => {
 
             paymentItem = paymentHousehold[0];
             paymentId = paymentHousehold[0].paymentId;
-            console.log('check payment id 1');
-            console.log(paymentId);
-            console.log('check payment id 2');
-
             var member = memDetails[0];
             amountMember = member.amount;
             personAmountDue = personAmountCheck(member, paymentId);
             personNetAmount = personAmountDue + paymentAmount;
-
-            console.log('debugger test 2');
-            console.log('checking net amount 1');
-            console.log(personAmountDue);
-            console.log('Payment Amount', paymentAmount);
-            console.log(personNetAmount);
-            console.log('checking net amount 2');
             if (personNetAmount > 0) {
                 res.status(500).json({
                     message: 'You cannot pay more than amount due '
                 })
             } else {
-                console.log('debugger test 3');
-
                 var firstQuery = Member.update({
                     username: payeeId,
                     "payment.paymentId": paymentId
@@ -235,8 +206,6 @@ var transactionpayment = async (req, res, next) => {
                 }, {
                     new: true
                 }, function(err, doc) {
-                    console.log(doc);
-                    console.log('first update check');
                 })
 
                 var secondQuery = Member.update({
@@ -248,8 +217,6 @@ var transactionpayment = async (req, res, next) => {
                 }, {
                     new: true
                 }, function(err, doc) {
-                    console.log(doc);
-                    console.log('second update check');
                 })
                 var thirdQuery = Payment.find({
                     paymentId: paymentId
@@ -261,17 +228,10 @@ var transactionpayment = async (req, res, next) => {
                     var paymentLender = 0;
                     var mem = reso[2];
                     var paymentLender = await lenderMember(mem[0].lender);
-                    //}).then((r) => {
-                    console.log('checking lender payment 1');
-                    console.log(paymentLender);
-                    console.log('checking payment lender 2');   
+                    //}).then((r) => {   
                     var updAmountForMember = await updMemAmount(mem[0].lender,paymentAmount,paymentLender);
                     var  updAmountDue = paymentItem.amountDue - paymentAmount;
-                    console.log('some checks here 1');
-                    console.log(updAmountDue);
-                    console.log('some check here 2');
                     var updPaymentOfHousehold = await updPaymentAndHousehold(paymentType,req.body.household,updAmountDue);
-                    console.log(updPaymentOfHousehold);
                      res.json(updPaymentOfHousehold);
                             
                 })
@@ -342,7 +302,6 @@ async function updPaymentAndHousehold(paymentType,household,updAmountDue) {
                                     message: 'Payment Was unsuccessfull'
                                 })
                             } else {
-                                console.log(updPayment);
                                 resolve({message: 'Payment Was successfull'});
                             }
 
@@ -407,7 +366,6 @@ var makepayment = (req, res, next) => {
                 }, {
                     new: true
                 }, function(err, doc) {
-                    console.log('parul raheja test 1');
                 })
             else
                 Member.update({
@@ -419,8 +377,6 @@ var makepayment = (req, res, next) => {
                 }, {
                     new: true
                 }, function(err, doc) {
-
-                    console.log(memberLis.username);
                 })
 
             if (memberLis.username === req.session.username) {
